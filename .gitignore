@@ -1,0 +1,20 @@
+# Dependências e saídas de build
+node_modules/
+dist/
+coverage/
+*.tsbuildinfo
+
+# Configurações locais e segredos (não versionar)
+.env
+.env.*
+!.env.example
+
+# Armazenamento de arquivos CSV em execução (ADR-003): fica fora do controle de versão
+armazenamento/
+back/armazenamento/
+
+# Sistema e editores
+.DS_Store
+.idea/
+.vscode/
+*.log

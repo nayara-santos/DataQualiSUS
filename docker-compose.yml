@@ -1,0 +1,16 @@
+# Ambiente local de desenvolvimento e testes: PostgreSQL 16 (ADR-001).
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: dataqualisus_postgres
+    environment:
+      POSTGRES_USER: dataqualisus
+      POSTGRES_PASSWORD: dataqualisus_dev
+      POSTGRES_DB: dataqualisus
+    ports:
+      - '55432:5432'
+    volumes:
+      - dataqualisus_pgdata:/var/lib/postgresql/data
+
+volumes:
+  dataqualisus_pgdata:
