@@ -1,0 +1,26 @@
+codigo,descricao
+A00,Cólera
+A01.0,Febre tifóide
+A09,Diarreia e gastroenterite de origem infecciosa presumível
+A15.0,Tuberculose pulmonar
+A90,Dengue [dengue clássico]
+A91,Febre hemorrágica devida ao vírus do dengue
+B20,Doença pelo HIV resultando em doenças infecciosas e parasitárias
+B50.9,Malária por Plasmodium falciparum não especificada
+E10.9,Diabetes mellitus insulino-dependente - sem complicações
+E11.9,Diabetes mellitus não-insulino-dependente - sem complicações
+E66.9,Obesidade não especificada
+I10,Hipertensão essencial (primária)
+I21.9,Infarto agudo do miocárdio não especificado
+I50.0,Insuficiência cardíaca congestiva
+I64,Acidente vascular cerebral não especificado como hemorrágico ou isquêmico
+J06.9,Infecção aguda das vias aéreas superiores não especificada
+J11.1,Influenza devida a vírus não identificado com outras manifestações respiratórias
+J18.9,Pneumonia não especificada
+J45.9,Asma não especificada
+K35.8,Apendicite aguda sem outra especificação
+N39.0,Infecção do trato urinário de localização não especificada
+O80,Parto único espontâneo
+R50.9,Febre não especificada
+U07.1,COVID-19 vírus identificado
+Z00.0,Exame médico geral
