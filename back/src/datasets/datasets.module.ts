@@ -15,6 +15,6 @@ import { VersionamentoService } from './versionamento.service';
     ArmazenamentoArquivosService,
     VersionamentoService,
   ],
-  exports: [DatasetRepository, ArmazenamentoArquivosService, VersionamentoService],
+  exports: [DatasetService, DatasetRepository, ArmazenamentoArquivosService, VersionamentoService],
 })
 export class DatasetsModule {}
