@@ -1,12 +1,35 @@
-import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  CanActivate,
+  ExecutionContext,
+  ForbiddenException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
+import { timingSafeEqual } from 'crypto';
 import { AutenticacaoService } from './autenticacao.service';
 import { NOME_COOKIE_SESSAO } from './cookie-sessao';
-import { CHAVE_ROTA_PUBLICA, RequisicaoAutenticada } from './decoradores';
+import { CHAVE_OPERACAO, CHAVE_ROTA_PUBLICA, RequisicaoAutenticada } from './decoradores';
+import { Operacao, verificarPermissao } from './matriz-permissoes';
+
+const METODOS_SEGUROS = new Set(['GET', 'HEAD', 'OPTIONS']);
+export const CABECALHO_CSRF = 'x-csrf-token';
+
+function tokensIguais(recebido: string | undefined, esperado: string): boolean {
+  if (!recebido) {
+    return false;
+  }
+  const a = Buffer.from(recebido);
+  const b = Buffer.from(esperado);
+  return a.length === b.length && timingSafeEqual(a, b);
+}
 
 /**
- * AutorizacaoGuard (P2, seção 2): aplicado globalmente, valida a sessão no servidor em toda
- * rota que não seja explicitamente pública. Sessão ausente, expirada ou encerrada recebe 401.
+ * AutorizacaoGuard (P2, seção 2 e DS4), aplicado globalmente a todas as rotas:
+ * 1. validarSessao(cookie): sessão ausente, expirada ou encerrada → 401;
+ * 2. token CSRF obrigatório em métodos que alteram estado → 403;
+ * 3. verificarPermissao(perfil, operação) pela matriz da P1, seção 8.3 → 403.
+ * Rotas sem operação declarada são negadas (falha fechada), mitigando o risco de rota sem guarda.
  */
 @Injectable()
 export class AutorizacaoGuard implements CanActivate {
@@ -30,6 +53,24 @@ export class AutorizacaoGuard implements CanActivate {
       });
     }
     requisicao.usuario = usuario;
+
+    if (!METODOS_SEGUROS.has((requisicao.method ?? 'GET').toUpperCase())) {
+      const recebido = requisicao.headers?.[CABECALHO_CSRF];
+      if (!tokensIguais(Array.isArray(recebido) ? recebido[0] : recebido, usuario.csrfToken)) {
+        throw new ForbiddenException({
+          erro: 'CSRF_INVALIDO',
+          mensagem: 'Token CSRF ausente ou inválido. Recarregue a sessão e tente novamente.',
+        });
+      }
+    }
+
+    const operacao = this.reflector.getAllAndOverride<Operacao | undefined>(CHAVE_OPERACAO, alvos);
+    if (!verificarPermissao(usuario.papel, operacao)) {
+      throw new ForbiddenException({
+        erro: 'OPERACAO_NAO_PERMITIDA',
+        mensagem: 'Operação não permitida para o seu perfil.',
+      });
+    }
     return true;
   }
 }

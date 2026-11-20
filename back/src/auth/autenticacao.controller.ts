@@ -2,18 +2,22 @@ import { Body, Controller, Get, HttpCode, HttpStatus, Post, Res } from '@nestjs/
 import { Response } from 'express';
 import { AutenticacaoService } from './autenticacao.service';
 import { NOME_COOKIE_SESSAO, opcoesCookieSessao } from './cookie-sessao';
-import { Publica, UsuarioAtual } from './decoradores';
+import { ExigeOperacao, Publica, UsuarioAtual } from './decoradores';
 import { EntrarDto } from './dto/entrar.dto';
+import { Operacao, operacoesDoPapel } from './matriz-permissoes';
 import { UsuarioAutenticado } from './papel-usuario';
 
 interface SessaoDto {
   usuario: { id: string; nome: string; email: string; papel: string };
+  /** Operações permitidas ao perfil; a verificação de verdade continua no AutorizacaoGuard. */
+  permissoes: Operacao[];
   csrfToken: string;
 }
 
 function paraSessaoDto(usuario: UsuarioAutenticado): SessaoDto {
   return {
     usuario: { id: usuario.id, nome: usuario.nome, email: usuario.email, papel: usuario.papel },
+    permissoes: operacoesDoPapel(usuario.papel),
     csrfToken: usuario.csrfToken,
   };
 }
@@ -32,11 +36,13 @@ export class AutenticacaoController {
     return paraSessaoDto(resultado.usuario);
   }
 
+  @ExigeOperacao(Operacao.SESSAO_PROPRIA)
   @Get('sessao')
   sessao(@UsuarioAtual() usuario: UsuarioAutenticado): SessaoDto {
     return paraSessaoDto(usuario);
   }
 
+  @ExigeOperacao(Operacao.SESSAO_PROPRIA)
   @Post('sair')
   @HttpCode(HttpStatus.NO_CONTENT)
   async sair(
