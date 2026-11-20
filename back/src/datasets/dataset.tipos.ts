@@ -106,3 +106,16 @@ export function paraDatasetDto(
     totalVersoes,
   };
 }
+
+export interface DatasetDetalheDto extends DatasetDto {
+  versoes: VersaoDto[];
+}
+
+export interface PaginaRegistrosDto {
+  versaoId: string;
+  colunas: string[];
+  pagina: number;
+  tamanho: number;
+  totalRegistros: number;
+  registros: { linha: number; valores: Record<string, string> }[];
+}
