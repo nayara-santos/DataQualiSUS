@@ -1,4 +1,12 @@
-import { ArgumentsHost, Catch, ExceptionFilter, HttpException, HttpStatus, Logger } from '@nestjs/common';
+import {
+  ArgumentsHost,
+  Catch,
+  ExceptionFilter,
+  HttpException,
+  HttpStatus,
+  Logger,
+  PayloadTooLargeException,
+} from '@nestjs/common';
 import { Response } from 'express';
 
 interface CorpoErro {
@@ -22,7 +30,14 @@ export class FiltroExcecoes implements ExceptionFilter {
       return;
     }
     let corpo: CorpoErro;
-    if (excecao instanceof HttpException) {
+    if (excecao instanceof PayloadTooLargeException) {
+      // Upload interrompido pelo multer antes da validação (limite da P1, seção 8.3).
+      corpo = {
+        statusCode: HttpStatus.PAYLOAD_TOO_LARGE,
+        erro: 'LIMITE_BYTES_EXCEDIDO',
+        mensagem: 'O arquivo excede o limite de 10.000.000 bytes.',
+      };
+    } else if (excecao instanceof HttpException) {
       const status = excecao.getStatus();
       const conteudo = excecao.getResponse();
       if (typeof conteudo === 'string') {
