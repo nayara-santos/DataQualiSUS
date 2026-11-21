@@ -1,0 +1,64 @@
+{
+  "descricao": "Registros sintéticos de vacinação com chave composta e lista literal.",
+  "arquivo": "vacinacao.csv",
+  "separador": "VIRGULA",
+  "totalLinhas": 22,
+  "regras": [
+    {
+      "chave": "B_U1",
+      "nome": "Registro e dose sem repetição",
+      "configuracao": {
+        "dimensao": "UNICIDADE",
+        "colunas": [{ "nome": "codigo_registro", "tipo": "TEXTO" }, { "nome": "dose", "tipo": "DECIMAL" }]
+      }
+    },
+    {
+      "chave": "B_C1",
+      "nome": "Lote e unidade preenchidos",
+      "configuracao": { "dimensao": "COMPLETUDE", "colunas": [{ "nome": "lote", "tipo": "TEXTO" }, { "nome": "unidade", "tipo": "TEXTO" }] }
+    },
+    {
+      "chave": "B_V1",
+      "nome": "Vacina do calendário",
+      "configuracao": {
+        "dimensao": "VALIDADE",
+        "combinador": "E",
+        "condicoes": [
+          { "coluna": "vacina", "tipo": "TEXTO", "operador": "PERTENCE_LISTA", "valores": ["BCG", "HEPATITE B", "PENTAVALENTE", "FEBRE AMARELA"] }
+        ],
+        "acao": { "tipo": "CONVERTER_CAIXA", "coluna": "vacina", "caixa": "MAIUSCULAS" }
+      }
+    },
+    {
+      "chave": "B_V2",
+      "nome": "Dose entre 1 e 3",
+      "configuracao": {
+        "dimensao": "VALIDADE",
+        "combinador": "E",
+        "condicoes": [
+          { "coluna": "dose", "tipo": "DECIMAL", "operador": "MAIOR_IGUAL", "valor": "1" },
+          { "coluna": "dose", "tipo": "DECIMAL", "operador": "MENOR_IGUAL", "valor": "3" }
+        ]
+      }
+    }
+  ],
+  "violacoesEsperadas": {
+    "B_U1": [7, 17],
+    "B_C1": [4, 5, 14],
+    "B_V1": [2, 6, 10, 19],
+    "B_V2": [8, 9, 12, 20]
+  },
+  "observacoes": {
+    "3": "mesmo registro com dose diferente não é repetição da chave composta",
+    "11": "dose 1.5 é decimal válido dentro da faixa",
+    "20": "dose vazia viola a validade e deixa a chave composta vazia (fora da unicidade)"
+  },
+  "totalLinhasComViolacao": 13,
+  "tratamento": { "alteradas": [2, 10], "removidas": [] },
+  "indicadores": {
+    "UNICIDADE": { "situacao": "AVALIADA", "numerador": 20, "denominador": 22, "percentual": 90.91 },
+    "COMPLETUDE": { "situacao": "AVALIADA", "numerador": 19, "denominador": 22, "percentual": 86.36 },
+    "VALIDADE": { "situacao": "AVALIADA", "numerador": 14, "denominador": 22, "percentual": 63.64 }
+  },
+  "cobertura": 3
+}

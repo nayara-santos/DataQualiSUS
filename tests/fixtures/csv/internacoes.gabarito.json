@@ -1,0 +1,52 @@
+{
+  "descricao": "Internações sintéticas, sem regra de unicidade (diagnóstico parcial).",
+  "arquivo": "internacoes.csv",
+  "separador": "VIRGULA",
+  "totalLinhas": 21,
+  "regras": [
+    {
+      "chave": "C_C1",
+      "nome": "Diagnóstico informado",
+      "configuracao": { "dimensao": "COMPLETUDE", "colunas": [{ "nome": "diagnostico", "tipo": "TEXTO" }], "marcadoresAusencia": ["SEM INFO"] }
+    },
+    {
+      "chave": "C_V1",
+      "nome": "Valor total positivo",
+      "configuracao": {
+        "dimensao": "VALIDADE",
+        "combinador": "E",
+        "condicoes": [{ "coluna": "valor_total", "tipo": "DECIMAL", "operador": "MAIOR", "valor": "0" }]
+      }
+    },
+    {
+      "chave": "C_V2",
+      "nome": "Alta ausente ou a partir de junho",
+      "configuracao": {
+        "dimensao": "VALIDADE",
+        "combinador": "OU",
+        "condicoes": [
+          { "coluna": "data_alta", "tipo": "DATA", "operador": "VAZIO" },
+          { "coluna": "data_alta", "tipo": "DATA", "operador": "MAIOR_IGUAL", "valor": "2025-06-01" }
+        ]
+      }
+    }
+  ],
+  "violacoesEsperadas": {
+    "C_C1": [4, 8, 14],
+    "C_V1": [3, 5, 6, 11, 17],
+    "C_V2": [4, 7, 16, 21]
+  },
+  "observacoes": {
+    "6": "valor '1.000,00' usa separador de milhares e vírgula decimal: erro de conversão",
+    "12": "o marcador declarado é comparado literalmente; 'sem info' difere de 'SEM INFO'",
+    "20": "0.01 é maior que zero"
+  },
+  "totalLinhasComViolacao": 11,
+  "tratamento": { "alteradas": [], "removidas": [] },
+  "indicadores": {
+    "UNICIDADE": { "situacao": "NAO_AVALIADA", "numerador": null, "denominador": null, "percentual": null },
+    "COMPLETUDE": { "situacao": "AVALIADA", "numerador": 18, "denominador": 21, "percentual": 85.71 },
+    "VALIDADE": { "situacao": "AVALIADA", "numerador": 12, "denominador": 21, "percentual": 57.14 }
+  },
+  "cobertura": 2
+}

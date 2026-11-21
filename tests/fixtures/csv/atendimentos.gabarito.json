@@ -1,0 +1,79 @@
+{
+  "descricao": "Atendimentos ambulatoriais sintéticos. Problemas inseridos manualmente e rotulados por linha e regra.",
+  "arquivo": "atendimentos.csv",
+  "separador": "PONTO_E_VIRGULA",
+  "totalLinhas": 24,
+  "regras": [
+    {
+      "chave": "A_U1",
+      "nome": "Atendimento sem repetição",
+      "configuracao": { "dimensao": "UNICIDADE", "colunas": [{ "nome": "id_atendimento", "tipo": "TEXTO" }], "acao": { "tipo": "REMOVER_REPETICOES" } }
+    },
+    {
+      "chave": "A_C1",
+      "nome": "Sexo informado",
+      "configuracao": {
+        "dimensao": "COMPLETUDE",
+        "colunas": [{ "nome": "sexo", "tipo": "TEXTO" }],
+        "marcadoresAusencia": ["ignorado"],
+        "acao": { "tipo": "PREENCHER_VAZIO", "coluna": "sexo", "valor": "NAO_INFORMADO" }
+      }
+    },
+    {
+      "chave": "A_V1",
+      "nome": "Idade entre 0 e 120",
+      "configuracao": {
+        "dimensao": "VALIDADE",
+        "combinador": "E",
+        "condicoes": [
+          { "coluna": "idade", "tipo": "DECIMAL", "operador": "MAIOR_IGUAL", "valor": "0" },
+          { "coluna": "idade", "tipo": "DECIMAL", "operador": "MENOR_IGUAL", "valor": "120" }
+        ]
+      }
+    },
+    {
+      "chave": "A_V2",
+      "nome": "CID principal no vocabulário",
+      "configuracao": {
+        "dimensao": "VALIDADE",
+        "combinador": "E",
+        "condicoes": [{ "coluna": "cid_principal", "tipo": "TEXTO", "operador": "PERTENCE_VOCABULARIO", "vocabularioId": "$CID10" }],
+        "acao": { "tipo": "APARAR_ESPACOS", "coluna": "cid_principal" }
+      }
+    },
+    {
+      "chave": "A_V3",
+      "nome": "Data em 2025",
+      "configuracao": {
+        "dimensao": "VALIDADE",
+        "combinador": "E",
+        "condicoes": [
+          { "coluna": "data_atendimento", "tipo": "DATA", "operador": "MAIOR_IGUAL", "valor": "2025-01-01" },
+          { "coluna": "data_atendimento", "tipo": "DATA", "operador": "MENOR_IGUAL", "valor": "2025-12-31" }
+        ]
+      }
+    }
+  ],
+  "violacoesEsperadas": {
+    "A_U1": [6, 16],
+    "A_C1": [3, 8, 14],
+    "A_V1": [4, 9, 11],
+    "A_V2": [5, 10, 20],
+    "A_V3": [7, 12, 21]
+  },
+  "observacoes": {
+    "8": "marcador declarado 'ignorado' conta como ausência, mas não é preenchido (não está vazio)",
+    "10": "código com espaços nas extremidades viola o vocabulário e é aparado pelo tratamento",
+    "11": "idade 'abc' é erro de conversão: violação de validade sem descartar a linha",
+    "18,19,23": "limites inclusivos (120, 0 e 2025-12-31) são aprovados",
+    "22": "chave vazia não participa da unicidade"
+  },
+  "totalLinhasComViolacao": 14,
+  "tratamento": { "alteradas": [3, 10, 14], "removidas": [6, 16] },
+  "indicadores": {
+    "UNICIDADE": { "situacao": "AVALIADA", "numerador": 22, "denominador": 24, "percentual": 91.67 },
+    "COMPLETUDE": { "situacao": "AVALIADA", "numerador": 21, "denominador": 24, "percentual": 87.5 },
+    "VALIDADE": { "situacao": "AVALIADA", "numerador": 15, "denominador": 24, "percentual": 62.5 }
+  },
+  "cobertura": 3
+}
