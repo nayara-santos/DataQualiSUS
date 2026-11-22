@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { AuditModule } from './audit/audit.module';
 import { AuthModule } from './auth/auth.module';
 import { ConfiguracaoModule } from './config/configuracao.module';
 import { DatabaseModule } from './database/database.module';
@@ -8,7 +9,15 @@ import { SimulationsModule } from './simulations/simulations.module';
 import { SaudeController } from './saude/saude.controller';
 
 @Module({
-  imports: [ConfiguracaoModule, DatabaseModule, AuthModule, DatasetsModule, RulesModule, SimulationsModule],
+  imports: [
+    ConfiguracaoModule,
+    DatabaseModule,
+    AuthModule,
+    DatasetsModule,
+    RulesModule,
+    SimulationsModule,
+    AuditModule,
+  ],
   controllers: [SaudeController],
 })
 export class AppModule {}
