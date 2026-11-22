@@ -1,0 +1,44 @@
+# Integração contínua do backend (P3, seção 9): lint, compilação e testes unitários e de integração.
+name: back
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  verificar:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: dataqualisus
+          POSTGRES_PASSWORD: dataqualisus_dev
+          POSTGRES_DB: dataqualisus
+        ports:
+          - 55432:5432
+        options: >-
+          --health-cmd "pg_isready -U dataqualisus"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    defaults:
+      run:
+        working-directory: back
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: back/package-lock.json
+      - run: npm ci
+      - run: npm run format:check
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npm run build
+      - run: npm test
+      - run: npm run test:integracao
+        env:
+          TEST_DATABASE_URL: postgres://dataqualisus:dataqualisus_dev@localhost:55432/dataqualisus_teste
