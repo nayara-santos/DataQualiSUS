@@ -47,17 +47,15 @@ describe('AuditoriaService', () => {
       buscarExtrato: jest.fn().mockResolvedValue(registroExtrato),
       listarPorDataset: jest.fn().mockResolvedValue([registroExtrato]),
       listarAlteracoes: jest.fn().mockResolvedValue([]),
-      listarDatasetsAuditados: jest
-        .fn()
-        .mockResolvedValue([
-          {
-            id: 'd1',
-            nome: 'Base',
-            situacao: 'ATIVO',
-            total_extratos: '2',
-            ultimo: new Date('2026-11-10T13:00:00Z'),
-          },
-        ]),
+      listarDatasetsAuditados: jest.fn().mockResolvedValue([
+        {
+          id: 'd1',
+          nome: 'Base',
+          situacao: 'ATIVO',
+          total_extratos: '2',
+          ultimo: new Date('2026-11-10T13:00:00Z'),
+        },
+      ]),
     } as unknown as jest.Mocked<AuditoriaRepository>;
     datasets = { buscarPorId: jest.fn().mockResolvedValue({ id: 'd1' }) };
     exportacao = new ExportacaoService();
