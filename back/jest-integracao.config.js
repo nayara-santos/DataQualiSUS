@@ -17,7 +17,7 @@ module.exports = {
   testEnvironment: 'node',
   moduleFileExtensions: ['js', 'json', 'ts'],
   testRegex: '.*\\.e2e-spec\\.ts$',
-  moduleDirectories: ['node_modules', path.resolve(__dirname, 'node_modules')],
+  modulePaths: [path.resolve(__dirname, 'node_modules')],
   transform: {
     '^.+\\.ts$': [
       require.resolve('ts-jest'),
