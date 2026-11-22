@@ -6,6 +6,7 @@ import { DatabaseModule } from './database/database.module';
 import { DatasetsModule } from './datasets/datasets.module';
 import { RulesModule } from './rules/rules.module';
 import { SimulationsModule } from './simulations/simulations.module';
+import { TreatmentsModule } from './treatments/treatments.module';
 import { SaudeController } from './saude/saude.controller';
 
 @Module({
@@ -17,6 +18,7 @@ import { SaudeController } from './saude/saude.controller';
     RulesModule,
     SimulationsModule,
     AuditModule,
+    TreatmentsModule,
   ],
   controllers: [SaudeController],
 })
