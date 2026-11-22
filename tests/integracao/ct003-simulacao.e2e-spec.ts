@@ -240,12 +240,10 @@ describe("CT003/CTN002 — simulação de regras", () => {
       .post("/api/simulacoes")
       .send({ versaoId: cenario.versaoId, conjuntoId: cenario.conjuntoId });
     expect(excluido.status).toBe(409);
-    const inexistente = await analista
-      .post("/api/simulacoes")
-      .send({
-        versaoId: "5e0e6a52-0000-4000-8000-000000000000",
-        conjuntoId: cenario.conjuntoId,
-      });
+    const inexistente = await analista.post("/api/simulacoes").send({
+      versaoId: "5e0e6a52-0000-4000-8000-000000000000",
+      conjuntoId: cenario.conjuntoId,
+    });
     expect(inexistente.status).toBe(404);
     expect(
       (
